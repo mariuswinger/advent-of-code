@@ -1,0 +1,11 @@
+Results for day 1, part A (N=10):
+ran the code a total of 10 time(s)
+ average time: 2.4729006690904497e-05
+ max time:     7.383304182440042e-05
+ min time:     1.750001683831215e-05
+
+Results for day 1, part B (N=10):
+ran the code a total of 10 time(s)
+ average time: 0.0001147416012827307
+ max time:     0.0001509999856352806
+ min time:     0.00010324997128918767

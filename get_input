@@ -1,0 +1,68 @@
+#!/usr/bin/env zsh
+# More safety, by turning some bugs into errors.
+set -o errexit -o pipefail -o noclobber -o nounset
+
+# option --output/-o requires 1 argument
+LONGOPTS=year:,day:,token::
+OPTIONS=y:,d:,t::
+
+# -temporarily store output to be able to check for errors
+# -activate quoting/enhanced mode (e.g. by writing out “--options”)
+# -pass arguments only via   -- "$@"   to separate them correctly
+# -if getopt fails, it complains itself to stdout
+PARSED=$(getopt --options=$OPTIONS --longoptions=$LONGOPTS --name "$0" -- "$@") || exit 2
+# read getopt’s output this way to handle the quoting right:
+eval set -- "$PARSED"
+
+year=- day=- token=-
+# now enjoy the options in order and nicely split until we see --
+while true; do
+  case "$1" in
+  --year)
+    year="$2"
+    shift 2
+    ;;
+  --day)
+    day="$2"
+    shift 2
+    ;;
+  --token)
+    token="$2"
+    shift 2
+    ;;
+  --)
+    shift
+    break
+    ;;
+  *)
+    echo "Programming error"
+    exit 3
+    ;;
+  esac
+done
+
+# check date is not in the future
+if [[ $(date -d $year-12-$day +%s) > $(date +%s) ]]; then
+  echo "Can not access the future"
+  exit 4
+fi
+
+# set token to env token
+if [[ $token == "-" ]]; then
+  token=$SESSION_TOKEN
+fi
+
+# ensure input directory exists
+INPUT_DIRECTORY="$(git rev-parse --show-toplevel)/${year}/input"
+if [[ ! -d "$INPUT_DIRECTORY" ]]; then
+  mkdir -p $INPUT_DIRECTORY
+fi
+
+# download input data if not already present
+INPUT_FILE_PATH=$(printf "%s/day%02d.txt" $INPUT_DIRECTORY $day)
+if [[ ! -f $INPUT_FILE_PATH ]]; then
+  printf "Downloading input data for AoC-%s day %d into '%s' ...\n" $year $day $INPUT_FILE_PATH
+  curl "https://adventofcode.com/${year}/day/${day}/input" --cookie "session=$token" -o $INPUT_FILE_PATH
+else
+  printf "Input data for AoC-%s day %d already exist!\n" $year $day $INPUT_FILE_PATH
+fi
