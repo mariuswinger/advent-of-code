@@ -49,7 +49,7 @@ fi
 
 # set token to env token
 if [[ $token == "-" ]]; then
-  token=$SESSION_TOKEN
+  token=$AOC_SESSION_TOKEN
 fi
 
 # ensure input directory exists

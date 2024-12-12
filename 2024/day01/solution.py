@@ -1,5 +1,6 @@
-from utils import SolutionAbstract
 import numpy as np
+
+from utilities.solution_abstract import SolutionAbstract
 
 
 class Solution(SolutionAbstract):
