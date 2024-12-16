@@ -5,13 +5,13 @@ from rich.progress import track
 
 from day06.utils.direction import Direction, direction_from_symbol
 from day06.utils.guard import Guard
+from day06.utils.guard_map import GuardMap
 from day06.utils.loop_exception import LoopException
-from day06.utils.map import Map
 from utilities.solution_abstract import SolutionAbstract
 
 
 class Solution(SolutionAbstract):
-    map: Map
+    map: GuardMap
     guard_start: Guard
 
     def _parse_input(self):
@@ -27,7 +27,7 @@ class Solution(SolutionAbstract):
                     position=(i, row_list.index(guard_start_direction.get_symbol())), direction=guard_start_direction
                 )
             map_l.append(row_list)
-        self.map = Map.from_list(map_l)
+        self.map = GuardMap.from_list(map_l)
 
     def get_guard_path(self) -> dict[Guard, bool]:
         """Return dictionary of guard positions."""
@@ -50,7 +50,7 @@ class Solution(SolutionAbstract):
         """Solve part a."""
         guard_path = self.get_guard_path()
 
-        is_visited = np.zeros(self.map.map_size, dtype=bool)
+        is_visited = np.zeros(self.map.shape, dtype=bool)
         for guard in guard_path:
             is_visited[guard.position] = True
 
@@ -60,7 +60,7 @@ class Solution(SolutionAbstract):
         """Solve part b."""
         original_guard_path = self.get_guard_path()
 
-        is_visited = np.zeros(self.map.map_size, dtype=bool)
+        is_visited = np.zeros(self.map.shape, dtype=bool)
         for guard in original_guard_path:
             is_visited[guard.position] = True
 
