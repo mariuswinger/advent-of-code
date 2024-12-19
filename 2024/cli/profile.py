@@ -33,7 +33,7 @@ class ProfileCommand(CommandBase):
         self.output_file_name = output_file_name
         self.force_rerun = force_rerun
         self.solution_dir_path = self.get_solution_dir_path(self.day)
-        self.solution_instance = self.get_solution_instance(self.day, use_test_data=False)
+        self.solution_instance = self.get_solution_instance(self.day, input_file_name="input.txt")
 
     @property
     def output_file_path(self) -> Path:

@@ -5,7 +5,6 @@ from typing_extensions import Annotated
 from cli.utils.abstract_command import CommandBase
 from cli.utils.day import Day
 from cli.utils.part import Part, PartArg
-from utilities.solution_abstract import SolutionAbstract
 
 app = typer.Typer()
 
@@ -13,19 +12,20 @@ app = typer.Typer()
 class SolveCommand(CommandBase):
     day: Day
     part: Part
-    solution_instance: SolutionAbstract
+    input_file_name: str
 
-    def __init__(self, day: Day, part: Part, use_test_data: bool):
+    def __init__(self, day: Day, part: Part, input_file_name: str):
         super().__init__()
         self.day = day
         self.part = part
-        self.solution_instance = self.get_solution_instance(self.day, use_test_data=use_test_data)
+        self.input_file_name = input_file_name
 
     def run(self) -> None:
         """Return answer to the requested part with the given input choice."""
         print(f"AoC-{self.year}, day {self.day}, part {self.part}")
-        print("computing solution ...")
-        solution = self.solution_instance.solve(self.part)
+        print(f"computing solution with input from '{self.input_file_name}'...")
+        solution_instance = self.get_solution_instance(day=self.day, input_file_name=self.input_file_name)
+        solution = solution_instance.solve(self.part)
         print(f"solution: {solution}")
 
 
@@ -33,11 +33,13 @@ class SolveCommand(CommandBase):
 def solve(
     day: Day,
     part: PartArg,
-    use_test_data: Annotated[bool, typer.Option("--test", help="use test data")] = False,
+    input_file_name: Annotated[
+        str, typer.Option("--input-file", "-i", help="filename of file to read input data from")
+    ] = "input.txt",
 ):
     """Return answer to the requested part with the given input choice."""
     try:
-        SolveCommand(day=day, part=part.to_part(), use_test_data=use_test_data).run()
+        SolveCommand(day=day, part=part.to_part(), input_file_name=input_file_name).run()
     except Exception as e:
         print(f"failed to solve: {e}")
         raise typer.Exit(1)

@@ -21,7 +21,7 @@ class SubmitCommand(CommandBase):
         super().__init__()
         self.day = day
         self.part = part
-        self.solution_instance = self.get_solution_instance(self.day, use_test_data=False)
+        self.solution_instance = self.get_solution_instance(self.day, input_file_name="input.txt")
 
     def run(self) -> None:
         """Submit solution of given part to AoC."""

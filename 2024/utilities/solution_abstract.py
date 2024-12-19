@@ -11,6 +11,8 @@ class SolutionAbstract(ABC):
     raw_data: list[str]
 
     def __init__(self, input_file_path: Path):
+        if not input_file_path.exists():
+            raise ValueError("could not find input file")
         with input_file_path.open("r") as file:
             self.raw_data = [line.strip("\r\n") for line in file.readlines()]
         self._parse_input()

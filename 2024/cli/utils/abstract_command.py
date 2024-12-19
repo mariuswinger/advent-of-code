@@ -41,7 +41,7 @@ class CommandBase:
         """Return path to the directory for the queried day."""
         return self.root_path / f"day{day:0>2}"
 
-    def get_solution_instance(self, day: Day, use_test_data: bool) -> SolutionAbstract:
+    def get_solution_instance(self, day: Day, input_file_name: str) -> SolutionAbstract:
         """Return requested solution class instance."""
         solution_dir_path = self.get_solution_dir_path(day)
 
@@ -51,8 +51,4 @@ class CommandBase:
             raise ValueError(f"solution for day {day} does not exist yet") from None
         solution_class = getattr(solution_module, "Solution")
 
-        input_file_path = solution_dir_path / f"{"sample_input" if use_test_data else "input"}.txt"
-        if not input_file_path.exists():
-            raise ValueError("could not find input file")
-
-        return solution_class(input_file_path=input_file_path)
+        return solution_class(solution_dir_path / input_file_name)
