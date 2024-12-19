@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+from typing import Any
 
 import numpy as np
 
@@ -9,9 +10,9 @@ class Map2DBase:
     _map_size: tuple[int, int] = field(init=False)
 
     @classmethod
-    def from_list(cls, map_list: list[list[str]]):
+    def from_list(cls, map_list: list[list[Any]], dtype: np.dtype = np.dtype("U1")):
         """Create a MapBase instance from a list of lists."""
-        return cls(values=np.array(map_list, dtype=np.dtype("U1")))
+        return cls(values=np.array(map_list, dtype=dtype))
 
     def __post_init__(self) -> None:
         """Set remaining attributes."""
@@ -37,3 +38,7 @@ class Map2DBase:
         if row < 0 or col < 0 or row >= self.height or col >= self.width:
             return False
         return True
+
+    def get_indices(self, mask: np.ndarray) -> np.ndarray:
+        """Return Nx2 array of indices where mask is True."""
+        return np.stack(np.where(mask), axis=-1)

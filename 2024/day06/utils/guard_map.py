@@ -11,7 +11,7 @@ class GuardMap(Map2DBase):
     is_obstacle: np.ndarray
 
     @classmethod
-    def from_list(cls, map_list: list[list[str]]):
+    def create(cls, map_list: list[list[str]]):
         """Create a Map instance from a list of lists."""
         map_base = Map2DBase.from_list(map_list)
         is_obstacle = np.zeros(map_base.shape, dtype=bool)

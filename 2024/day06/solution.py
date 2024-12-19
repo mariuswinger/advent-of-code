@@ -27,7 +27,7 @@ class Solution(SolutionAbstract):
                     position=(i, row_list.index(guard_start_direction.get_symbol())), direction=guard_start_direction
                 )
             map_l.append(row_list)
-        self.map = GuardMap.from_list(map_l)
+        self.map = GuardMap.create(map_l)
 
     def get_guard_path(self) -> dict[Guard, bool]:
         """Return dictionary of guard positions."""
