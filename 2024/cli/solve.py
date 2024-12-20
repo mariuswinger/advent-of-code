@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import typer
 from rich import print
 from typing_extensions import Annotated
@@ -29,12 +31,23 @@ class SolveCommand(CommandBase):
         print(f"solution: {solution}")
 
 
+def input_file_name_callback(input_file_name: str):
+    """Ensure that input file name has suffix."""
+    if Path(input_file_name).suffix == "":
+        print(f"[yellow]input file name '{input_file_name}' has no suffix, assumes '.txt' suffix[/yellow]")
+        return input_file_name + ".txt"
+    return input_file_name
+
+
 @app.command()
 def solve(
     day: Day,
     part: PartArg,
     input_file_name: Annotated[
-        str, typer.Option("--input-file", "-i", help="filename of file to read input data from")
+        str,
+        typer.Option(
+            "--input-file", "-i", callback=input_file_name_callback, help="filename of file to read input data from"
+        ),
     ] = "input.txt",
 ):
     """Return answer to the requested part with the given input choice."""
