@@ -48,30 +48,3 @@ class LinearDiophantineEquation:
         # Then a solution for x can be  found by solving ax ≡ c (mod b)
         x = pow(self.a, -1, self.b) * self.c % self.b
         return (x, (self.c - self.a * x) // self.b)
-
-
-@dataclass
-class SolutionSet:
-    equation: LinearDiophantineEquation
-    particular_solution: tuple[int, int]
-
-    def __init__(self, equation: LinearDiophantineEquation) -> None:
-        if not equation.is_solveable():
-            raise ValueError(f"Equation {self.equation} has no solutions")
-        self.equation = equation
-        self.particular_solution = self.equation.get_particular_solution()
-
-    @property
-    def x_solution_offset(self) -> int:
-        return self.equation.b // self.equation.gcd
-
-    @property
-    def y_solution_offset(self) -> int:
-        return -self.equation.a // self.equation.gcd
-
-    def get_solution(self, k: int) -> tuple[int, int]:
-        """Return a general solution for a given integer multiple k."""
-        return (
-            self.particular_solution[0] + k * self.x_solution_offset,
-            self.particular_solution[1] + k * self.y_solution_offset,
-        )

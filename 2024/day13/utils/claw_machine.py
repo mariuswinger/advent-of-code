@@ -68,9 +68,18 @@ class ClawMachine:
         return self.x_equation.is_solveable() and self.y_equation.is_solveable()
 
     def get_solution(self) -> tuple[int, int]:
-        """Return solution to claw machine or raise error if no solution exists."""
+        """Return solution to claw machine or raise error if no solution exists.
+
+        Represents problem as linear equations with (a, b) button presses as variable:
+        [a_x b_x | p_x]
+        [a_y b_y | p_y]
+        """
         equation_system = Augmented2x2Matrix.from_equations(self.x_equation, self.y_equation)
-        reduced_equation_system = equation_system.transpose().reduce_first_column().transpose()
+        # transpose to use (Euclidean algorithm) row reduction on columns
+        reduced_equation_system = (
+            equation_system.transpose().apply_euclidean_reduction_to_diophantine_columns().transpose()
+        )
+        # solve the reduced system and map back to the original problem by the right side
         solution = np.dot(
             reduced_equation_system.right,
             _solve_reduced_system(
@@ -89,6 +98,7 @@ class ClawMachine:
 
 
 def _solve_reduced_system(reduced_coefficients: np.ndarray, prize_position: XYPosition) -> npt.NDArray[np.int64]:
+    """Solve reduced system using back substitution over the integers."""
     k0, r = np.divmod(prize_position.x, reduced_coefficients[0, 0])
     if r != 0:
         raise ValueError("no integer solution exist")

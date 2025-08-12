@@ -76,8 +76,10 @@ class Augmented2x2Matrix:
             ),
         )
 
-    def reduce_first_column(self) -> "Augmented2x2Matrix":
-        """Return echelon form of matrix."""
+    def apply_euclidean_reduction_to_diophantine_columns(self) -> "Augmented2x2Matrix":
+        """Apply Euclidean algorithm to reduce matrix where columns are Diophantine equations.
+
+        Returns echelon form of matrix."""
         reduced_system = self.copy()
         column = reduced_system.first_column
         while np.count_nonzero(column) != 1:
