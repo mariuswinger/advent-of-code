@@ -1,27 +1,28 @@
 import requests
-import typer
 from bs4 import BeautifulSoup
 from requests.models import Response
 from rich import print
 
-from cli.utils.abstract_command import CommandBase
-from cli.utils.day import Day
-from cli.utils.part import Part, PartArg
+from cli.utils.arguments.day import Day
+from cli.utils.command_base import CommandBase
+from cli.utils.context import ContextObject
+from cli.utils.part import Part
 from utilities.solution_abstract import SolutionAbstract
-
-app = typer.Typer()
 
 
 class SubmitCommand(CommandBase):
     day: Day
     part: Part
-    solution_instance: SolutionAbstract
 
-    def __init__(self, day: Day, part: Part):
-        super().__init__()
+    @property
+    def solution_instance(self) -> SolutionAbstract:
+        """Return solution instance."""
+        return self.get_solution_instance(day=self.day, input_file_name="input.txt")
+
+    def __init__(self, context: ContextObject, day: Day, part: Part):
+        super().__init__(context=context)
         self.day = day
         self.part = part
-        self.solution_instance = self.get_solution_instance(self.day, input_file_name="input.txt")
 
     def run(self) -> None:
         """Submit solution of given part to AoC."""
@@ -41,7 +42,7 @@ class SubmitCommand(CommandBase):
         """Post results to AoC."""
         url = f"https://adventofcode.com/{self.year}/day/{self.day}/answer"
         data = {"level": str(self.part), "answer": str(answer)}
-        return requests.post(url, cookies={"session": self.session_token}, data=data)
+        return requests.post(url, cookies={"session": self._context.session_token}, data=data)
 
     @staticmethod
     def _parse_response(response_text: str) -> str:
@@ -65,16 +66,3 @@ class SubmitCommand(CommandBase):
             return f"[yellow]{output.text}[/yellow]"
         else:
             return f"[red]{output.text}[/red]"
-
-
-@app.command()
-def submit(
-    day: Day,
-    part: PartArg,
-):
-    """Submit solution of given part to AoC."""
-    try:
-        SubmitCommand(day=day, part=part.to_part()).run()
-    except Exception as e:
-        print(f"failed to submit: {e}")
-        raise typer.Exit(1)

@@ -5,7 +5,7 @@ from typing import Any, NamedTuple, Self
 
 import numpy as np
 
-from cli.utils.day import Day
+from cli.utils.arguments.day import Day
 from cli.utils.part import Part
 
 _prefix = {

@@ -11,6 +11,9 @@ dependencies = [
   "typer>=0.15.1",
 ]
 
+[tool.uv]
+package = false
+
 [tool.ruff]
 # Allow lines to be as long as 120.
 line-length = 120

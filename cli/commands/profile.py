@@ -1,32 +1,41 @@
 from pathlib import Path
 from timeit import default_timer as timer
 
-import typer
 from rich import box, print
 from rich.console import Console
 from rich.table import Column, Table
-from typing_extensions import Annotated
 
-from cli.utils.abstract_command import CommandBase
-from cli.utils.day import Day
+from cli.utils.arguments.day import Day
+from cli.utils.command_base import CommandBase
+from cli.utils.context import ContextObject
+from cli.utils.options.cut_off_time import CutOffTime
+from cli.utils.options.force_rerun import ForceRerun
+from cli.utils.options.output_file_name import OutputFileName
+from cli.utils.options.run_count import RunCount
 from cli.utils.part import Part
 from cli.utils.profile_results import PartProfileResults, ProfileResults
 from utilities.solution_abstract import SolutionAbstract
 
-app = typer.Typer()
-
 
 class ProfileCommand(CommandBase):
     day: Day
-    run_count: int
-    cut_off_time: float
-    output_file_name: str
-    force_rerun: bool
+    run_count: RunCount
+    cut_off_time: CutOffTime
+    output_file_name: OutputFileName
+    force_rerun: ForceRerun
     solution_dir_path: Path
     solution_instance: SolutionAbstract
 
-    def __init__(self, day: Day, run_count: int, cut_off_time: float, output_file_name: str, force_rerun: bool):
-        super().__init__()
+    def __init__(
+        self,
+        context: ContextObject,
+        day: Day,
+        run_count: RunCount,
+        cut_off_time: CutOffTime,
+        output_file_name: OutputFileName,
+        force_rerun: ForceRerun,
+    ):
+        super().__init__(context=context)
         self.day = day
         self.run_count = run_count
         self.cut_off_time = cut_off_time
@@ -100,29 +109,3 @@ class ProfileCommand(CommandBase):
         table.add_row(*results.a.to_table_row())
         table.add_row(*results.b.to_table_row())
         console.print(table)
-
-
-@app.command()
-def profile(
-    day: Annotated[int, typer.Argument(min=1, max=25)],
-    run_count: Annotated[int, typer.Option(help="number of times to run code")] = 10,
-    cut_off_time: Annotated[
-        float, typer.Option(help="upper limit in seconds for total time usage on profiling a solution")
-    ] = 30,
-    output_file_name: Annotated[
-        str, typer.Option("--output", "-o", help="file name for output file")
-    ] = "profiling.json",
-    force_rerun: Annotated[bool, typer.Option("--force-rerun", "-f", help="rerun profiling")] = False,
-):
-    """Profile the solutions for the queried day."""
-    try:
-        ProfileCommand(
-            day=day,
-            run_count=run_count,
-            cut_off_time=cut_off_time,
-            output_file_name=output_file_name,
-            force_rerun=force_rerun,
-        ).run()
-    except Exception as e:
-        print(f"failed to profile solution: {e}")
-        raise typer.Exit(1)

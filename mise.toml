@@ -1,0 +1,7 @@
+
+[tools]
+python = "3.13.7"
+
+[env]
+_.python.venv = ".venv"
+AOC_SESSION_TOKEN = "53616c7465645f5f2cab008087221d8b4065313b6e5106dce703edc4d63dfe0b760258d7831a273011d63e9faac9a7dd27ad0de078e68026c036c103fec41431"

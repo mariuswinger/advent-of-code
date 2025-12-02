@@ -1,9 +1,6 @@
-from enum import Enum, IntEnum
+from enum import Enum
 
-
-class Part(IntEnum):
-    A = 1
-    B = 2
+from cli.utils.part import Part
 
 
 class PartArg(str, Enum):
