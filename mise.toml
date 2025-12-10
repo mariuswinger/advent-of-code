@@ -5,3 +5,42 @@ python = "3.13.7"
 [env]
 _.python.venv = ".venv"
 AOC_SESSION_TOKEN = "53616c7465645f5f2cab008087221d8b4065313b6e5106dce703edc4d63dfe0b760258d7831a273011d63e9faac9a7dd27ad0de078e68026c036c103fec41431"
+
+
+[tasks.init]
+description = "Init new directory for given day"
+usage = '''
+arg "<year>" help="Target year" {
+  choices "2024" "2025"
+}
+arg "<day>" help="Target day"
+'''
+run = "uv run python main.py --year ${usage_year} init ${usage_day}"
+
+[tasks.solve]
+description = "Solve for given day and part"
+usage = '''
+arg "<year>" help="Target year" {
+  choices "2024" "2025"
+}
+arg "<day>" help="Target day"
+arg "<part>" help="Target part" {
+  choices "a" "b"
+}
+flag "--input-file <input-file>" help="Input file to use" default="input.txt"
+'''
+run = "uv run python main.py --year ${usage_year} solve ${usage_day} ${usage_part} --input-file ${usage_input_file}"
+
+
+[tasks.submit]
+description = "Submit solution for given day and part"
+usage = '''
+arg "<year>" help="Target year" {
+  choices "2024" "2025"
+}
+arg "<day>" help="Target day"
+arg "<part>" help="Target part" {
+  choices "a" "b"
+}
+'''
+run = "uv run python main.py --year ${usage_year} submit ${usage_day} ${usage_part}"
